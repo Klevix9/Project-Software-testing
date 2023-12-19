@@ -1,0 +1,11 @@
+To run the application navigate through:
+Bookstore -> src -> bookstore -> java and open the Main.java file
+Add the javafx library if necessary and run.
+
+To log-in use these accounts:
+
+admin@gmail.com		7845152	admin@1
+manager1@gmail.com	847851	manager@1
+librarian1@gmail.com	457812	librarian@1
+
+you can use either the email or "phone number" to log-in.

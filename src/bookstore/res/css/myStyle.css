@@ -1,0 +1,142 @@
+
+.main_layout {
+    -fx-background-color: #fff;
+}
+
+.menu_layout {
+    -fx-background-color: rgb(221, 221, 221);
+    -fx-padding: 0 0 0 0;
+}
+
+.menu_layout .menu {
+    -fx-background-color: transparent;
+    -fx-padding: 3 10 3 10;
+}
+
+.menu_layout .menu .label {
+    -fx-font-family: "Comic Sans Ms";
+    -fx-text-fill: rgb(110, 110, 110);
+    -fx-font-size: 13px;
+}
+
+.menu_layout .menu:hover,
+.menu_layout .menu:active,
+.menu_layout .menu:showing {
+    -fx-background-color: rgb(197, 197, 197);
+}
+
+.menu_layout .menu:hover .label,
+.menu_layout .menu:active .label,
+.menu_layout .menu:showing .label {
+    -fx-text-fill: rgb(51, 51, 51);
+}
+
+.menu_layout .context-menu {
+    -fx-background-color: #fff;
+    -fx-padding: 2 2 2 2;
+}
+
+.menu_layout .context-menu .menu-item {
+    -fx-background-color: #fff;
+    -fx-padding: 0 3 0 0;
+}
+
+.menu_layout .context-menu .menu-item .label {
+    -fx-font-family: "Comic Sans Ms";
+    -fx-text-fill: rgb(97, 97, 97);
+    -fx-font-size: 13px;
+    -fx-padding: 5 8 5 8;
+}
+
+.menu_layout .context-menu .menu-item:hover,
+.menu_layout .context-menu .menu-item:active,
+.menu_layout .context-menu .menu-item:showing {
+    -fx-background-color: rgb(0, 116, 232);
+    -fx-text-fill: white;
+}
+
+.menu_layout .context-menu .menu-item:hover .label,
+.menu_layout .context-menu .menu-item:showing .label,
+.menu_layout .context-menu .menu-item:active .label {
+    -fx-text-fill: white;
+}
+
+.menu_layout .context-menu .check-menu-item {
+    -fx-padding: 0 8 0 8;
+}
+
+.app_label {
+    -fx-font-family: Consolas;
+    -fx-font-size: 36;
+    -fx-text-fill: #000;
+}
+
+.heading {
+    -fx-font-family: Consolas;
+    -fx-font-size: 14px;
+    -fx-text-fill: #000;
+}
+
+.field {
+    -fx-pref-width: 250px;
+    -fx-background-color: rgb(245, 245, 245);
+    -fx-font-family: Consolas;
+    -fx-font-size: 14px;
+    -fx-text-fill: rgb(31, 31, 31);
+    -fx-focus-color: transparent;
+    -fx-background-radius: 0;
+    -fx-faint-focus-color: transparent;
+    -fx-border-color: #ccc;
+    -fx-highlight-fill: rgb(173, 214, 255);
+    -fx-highlight-text-fill: rgb(31, 31, 31);
+    -fx-padding: 3 3 3 3;
+}
+
+.field:hover {
+    -fx-border-color: rgb(153, 202, 235);
+}
+
+.field:focused {
+    -fx-border-color: rgb(0, 144, 224);
+}
+
+.btn {
+    -fx-font-family: Consolas;
+    -fx-font-size: 14px;
+    -fx-text-fill: #000;
+    -fx-pref-width: 100;
+    -fx-background-color: rgb(245, 245, 245);
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-padding: 3 5 3 5;
+    -fx-border-radius: 3px;
+    -fx-border-width: 1 1 1 1;
+    -fx-border-color: #ccc;
+}
+
+.btn:hover {
+    -fx-border-color: rgb(0, 144, 224);
+}
+
+.value_field {
+    -fx-pref-width: 195px;
+    -fx-background-color: rgb(245, 245, 245);
+    -fx-font-family: Consolas;
+    -fx-font-size: 14px;
+    -fx-text-fill: rgb(31, 31, 31);
+    -fx-focus-color: transparent;
+    -fx-background-radius: 0;
+    -fx-faint-focus-color: transparent;
+    -fx-border-color: #ccc;
+    -fx-highlight-fill: rgb(173, 214, 255);
+    -fx-highlight-text-fill: rgb(31, 31, 31);
+    -fx-padding: 3 3 3 3;
+}
+
+.value_field:hover {
+    -fx-border-color: rgb(153, 202, 235);
+}
+
+.value_field:focused {
+    -fx-border-color: rgb(0, 144, 224);
+}

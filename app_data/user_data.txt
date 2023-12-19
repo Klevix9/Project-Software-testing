@@ -1,0 +1,5 @@
+Admin admin,28-06-1971,7845152,admin@gmail.com,admin@1,500000,admin,Active
+Manager 1,28-10-1955,847851,manager1@gmail.com,manager@1,250000,manager,Active
+Librarian 1,12-01-1964,457812,librarian1@gmail.com,librarian@1,100000,librarian,Active
+Librarian 2,31-15-1975,325481,librarian2@gmail.com,librarian@2,100500,librarian,Active
+Manager 2,07-10-1952,12459515,manager2@gmail.com,manager@2,300000,manager,Active
