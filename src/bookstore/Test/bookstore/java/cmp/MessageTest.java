@@ -77,7 +77,7 @@ class MessageTest {
         verify(dialogMock).setHeaderText("Input Header");
         verify(dialogMock).showAndWait();
 
-        // Check if the result is as expected
+        // Check if the result is as expected.
         assert result.isPresent();
         assert result.get().equals("Test Input");
     }
