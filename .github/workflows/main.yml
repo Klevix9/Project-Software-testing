@@ -36,3 +36,9 @@ jobs:
         uses: JetBrains/qodana-action@v2023.2
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+      - name: Generate changelog
+        uses: heinrichreimer/action-github-changelog-generator@v2.4
+
+
+              
+            
