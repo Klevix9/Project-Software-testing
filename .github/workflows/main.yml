@@ -9,6 +9,14 @@ on:
       - 'releases/*'
 
 jobs:
+  changelog:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: "✏️ Generate release changelog"
+        uses: heinrichreimer/action-github-changelog-generator@v2.3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }} 
+
   build:
     runs-on: ubuntu-latest
     permissions:
@@ -38,7 +46,3 @@ jobs:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
       - name: Generate changelog
         uses: heinrichreimer/action-github-changelog-generator@v2.4
-
-
-              
-            
