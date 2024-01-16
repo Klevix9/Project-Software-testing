@@ -1,7 +1,5 @@
 package bookstore.java.cmp;
 
-import bookstore.java.cmp.Access;
-import bookstore.java.cmp.User;
 import org.junit.Before;
 import org.junit.Test;
 
