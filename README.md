@@ -23,9 +23,8 @@ This repository contains the source code for a JavaFX Bookstore App. The app pro
 
 1. Clone the repository:
 
-```bash
-git clone https://github.com/sara-berberi/JavaFX-Bookstore-APP.git
-```
+https://github.com/Klevix9/Project-Software-testing.git
+
 
 Ensure that you have JDK and JavaFX installed on your machine. If not, you can download them from the following links:
 - JDK: [Download JDK](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
