@@ -1,13 +1,16 @@
 package bookstore.java.cmp;
-import bookstore.java.cmp.Message;
+
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class MessageTest {
 
     private Alert alert;
