@@ -1,0 +1,163 @@
+package bookstore.java.ctrl;
+import bookstore.java.cmp.Bill;
+import bookstore.java.cmp.Book;
+import bookstore.java.cmp.Message;
+import bookstore.java.model.LibrarianModel;
+import bookstore.java.view.LibrarianView;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import java.util.Optional;
+
+import static org.mockito.Mockito.*;
+
+public class LibrarianCtrlTest {
+
+    private LibrarianModel model;
+    private LibrarianView view;
+    private LibrarianCtrl controller;
+
+    @Before
+    public void setUp() {
+        model = mock(LibrarianModel.class);
+        view = mock(LibrarianView.class);
+        controller = new LibrarianCtrl(model, view);
+    }
+
+    @Test
+    public void testBookListBoxActionBookExists() {
+        // Mocking the view's getSelectedIndex method
+        when(view.getSelectedIndex()).thenReturn(0);
+
+        // Mocking the model's getBook method
+        when(model.getBook(anyInt())).thenReturn(new Book("123", "Sample Book", "Fiction", "John Doe", "Publisher", "01-01-2022"));
+
+        // Calling the method to be tested
+        controller.bookListBoxAction();
+
+        // Verifying that the necessary methods were called
+        verify(view, times(1)).getSelectedIndex();
+        verify(model, times(1)).getBook(eq(0));
+        verify(view, times(1)).updateDataFields(any(Book.class));
+    }
+
+    @Test
+    public void testBookListBoxActionBookNotExists() {
+        // Mocking the view's getSelectedIndex method
+        when(view.getSelectedIndex()).thenReturn(1);
+
+        // Mocking the model's getBook method
+        when(model.getBook(anyInt())).thenReturn(null);
+
+        // Calling the method to be tested
+        controller.bookListBoxAction();
+
+        // Verifying that the necessary methods were called
+        verify(view, times(1)).getSelectedIndex();
+        verify(model, times(1)).getBook(eq(1));
+        verify(view, never()).updateDataFields(any(Book.class));
+    }
+
+    @Test
+    public void testFullInfoBtnActionBookExists() {
+        // Mocking the view's getSelectedIndex method
+        when(view.getSelectedIndex()).thenReturn(0);
+
+        // Mocking the model's getBook method
+        when(model.getBook(anyInt())).thenReturn(new Book("123", "Sample Book", "Fiction", "John Doe", "Publisher", "01-01-2022"));
+
+        // Mocking the Message.showInfo method
+        doNothing().when(Message.class);
+        Message.showInfo(anyString(), anyString());
+
+        // Calling the method to be tested
+        controller.fullInfoBtnAction();
+
+        // Verifying that the necessary methods were called
+        verify(view, times(1)).getSelectedIndex();
+        verify(model, times(1)).getBook(eq(0));
+    }
+
+    @Test
+    public void testFullInfoBtnActionBookNotExists() {
+        // Mocking the view's getSelectedIndex method
+        when(view.getSelectedIndex()).thenReturn(1);
+
+        // Mocking the model's getBook method
+        when(model.getBook(anyInt())).thenReturn(null);
+
+        // Mocking the Message.showError method
+        doNothing().when(Message.class);
+        Message.showError(anyString());
+
+        // Calling the method to be tested
+        controller.fullInfoBtnAction();
+
+        // Verifying that the necessary methods were called
+        verify(view, times(1)).getSelectedIndex();
+        verify(model, times(1)).getBook(eq(1));
+    }
+
+    @Test
+    public void testCheckoutBtnActionSuccessfulBilling() {
+        // Mocking the view's getSelectedIndex method
+        when(view.getSelectedIndex()).thenReturn(0);
+
+        // Mocking the Message.showInput method to return a valid quantity
+        when(Message.showInput(anyString(), anyString())).thenReturn(Optional.of("5"));
+
+        // Mocking the model's getBook and checkOutBook methods
+        when(model.getBook(anyInt())).thenReturn(new Book("123", "Sample Book", "Fiction", "John Doe", "Publisher", "01-01-2022"));
+        when(model.checkOutBook(anyString(), anyInt())).thenReturn(1);
+
+        // Mocking the model's getBill method
+
+        // Mocking the Message.showConfirm method to return OK
+        when(Message.showConfirm(anyString(), anyString())).thenReturn(Optional.of(ButtonType.OK));
+
+        // Mocking the model's updateData method
+        doNothing().when(model).updateData();
+
+        // Calling the method to be tested
+        controller.checkoutBtnAction();
+
+        // Verifying that the necessary methods were called
+        verify(view, times(1)).getSelectedIndex();
+        verify(model, times(1)).getBook(eq(0));
+        verify(model, times(1)).checkOutBook(eq("123"), eq(5));
+        verify(model, times(1)).getBill(eq(1));
+        verify(model, times(1)).updateData();
+        verify(view, times(1)).updateDataFields(any(Book.class));
+    }
+
+    @Test
+    public void testCheckoutBtnActionUnsuccessfulBilling() {
+        // Mocking the view's getSelectedIndex method
+        when(view.getSelectedIndex()).thenReturn(0);
+
+        // Mocking the Message.showInput method to return an invalid quantity
+        when(Message.showInput(anyString(), anyString())).thenReturn(Optional.of("15"));
+
+        // Mocking the model's getBook and checkOutBook methods
+        when(model.getBook(anyInt())).thenReturn(new Book("123", "Sample Book", "Fiction", "John Doe", "Publisher", "01-01-2022"));
+        when(model.checkOutBook(anyString(), anyInt())).thenReturn(-1);
+
+        // Mocking the Message.showError method
+        doNothing().when(Message.class);
+        Message.showError(anyString());
+
+        // Calling the method to be tested
+        controller.checkoutBtnAction();
+
+        // Verifying that the necessary methods were called
+        verify(view, times(1)).getSelectedIndex();
+        verify(model, times(1)).getBook(eq(0));
+        verify(model, times(1)).checkOutBook(eq("123"), eq(15));
+        verify(model, never()).getBill(anyInt());
+        verify(model, never()).updateData();
+        verify(view, never()).updateDataFields(any(Book.class));
+    }
+}
