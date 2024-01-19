@@ -70,8 +70,7 @@ public class AdminCtrlTest {
 
         // Verifying the interactions
 
-        //Ensures that the addBook method of the model mock object is never called with any instance of the 
-        //Book class during the test.
+//Ensures that the addBook method of the model mock object is never called with any instance of the Book class during the test.
         verify(model, never()).addBook(any(Book.class));
         //Verifies that the updateData method of the model mock object is never called during the test.
         verify(model, never()).updateData();
