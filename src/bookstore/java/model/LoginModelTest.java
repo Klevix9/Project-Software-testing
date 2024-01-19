@@ -15,112 +15,128 @@ public class LoginModelTest {
     private StoreLogic logic;
     private GUI gui;
 
+    // Set up method to initialize objects before each test
     @Before
     public void setUp() {
+        // Mock StoreLogic and GUI objects
         logic = mock(StoreLogic.class);
         gui = mock(GUI.class);
-        loginModel = new LoginModel(logic, gui);
+        // Create LibrarianModel object with mocked dependencies
+        librarianModel = new LibrarianModel(logic, gui);
     }
 
+    // Test case for the logout method
     @Test
-    public void testLogin_ValidCredentials() {
-        // Arrange
-        String emailPh = "test@example.com";
-        String password = "password";
-        User user = new User(new String[]{"John Doe"});
-        when(logic.getUser(emailPh, password)).thenReturn(user);
+    public void testLogout() {
+        // Act: Call the logout method
+        librarianModel.logout();
 
-        // Act
-        boolean result = loginModel.login();
-
-        // Assert
-        verify(logic, times(1)).getUser("", "");
+        // Assert: Verify that logOut and setLayoutToLogin methods are called once each
+        verify(logic, times(1)).logOut();
+        verify(gui, times(1)).setLayoutToLogin();
     }
 
+    // Test case for updating data
     @Test
-    public void testChangeView_Librarian() {
-        // Arrange
-        int res = 1;
+    public void testUpdateData() {
+        // Act: Call the updateData method
+        librarianModel.updateData();
 
-        // Act
-        loginModel.changeView(res);
-
-        // Assert
-        verify(gui, times(1)).setLayoutToLibrarian();
+        // Assert: Verify that saveBillsData and saveBookData methods are called once each
+        verify(logic, times(1)).saveBillsData();
+        verify(logic, times(1)).saveBookData();
     }
 
-    @Test
-    public void testChangeView_Manager() {
-        // Arrange
-        int res = 2;
-
-        // Act
-        loginModel.changeView(res);
-
-        // Assert
-        verify(gui, times(1)).setLayoutToManager();
-    }
-
-    @Test
-    public void testChangeView_Administrator() {
-        // Arrange
-        int res = 3;
-
-        // Act
-        loginModel.changeView(res);
-
-        // Assert
-        verify(gui, times(1)).setLayoutToAdministrator();
-    }
-
-    @Test
-    public void testChangeView_Default() {
-        // Arrange
-        int res = 0;
-
-        // Act
-        loginModel.changeView(res);
-
-        // Assert
-        verify(gui, never()).setLayoutToLibrarian();
-        verify(gui, never()).setLayoutToManager();
-        verify(gui, never()).setLayoutToAdministrator();
-    }
-
-    @Test
-    public void testSetEmailPh() {
-        // Arrange
-        String emailPh = "test@example.com";
-
-        // Act
-        loginModel.setEmailPh(emailPh);
-
-        // Assert
-        assertEquals(emailPh, loginModel.getEmailPh());
-    }
-
-    @Test
-    public void testSetPassword() {
-        // Arrange
-        String password = "password";
-
-        // Act
-        loginModel.setPassword(password);
-
-        // Assert
-        assertEquals(password, loginModel.getPassword());
-    }
-
+    // Test case for getting the current user
     @Test
     public void testGetCurrUser() {
-        // Arrange
+        // Arrange: Set up variables and mock behavior
         User user = new User(new String[]{"John Doe"});
-        loginModel.setCurrUser(user);
+        when(logic.getLoggedInUser()).thenReturn(user);
 
-        // Act
-        User result = loginModel.getCurrUser();
+        // Act: Call the getCurrUser method
+        User result = librarianModel.getCurrUser();
 
-        // Assert
+        // Assert: Verify that getLoggedInUser method is called once, and the result is the expected user
+        verify(logic, times(1)).getLoggedInUser();
         assertEquals(user, result);
+    }
+
+    // Test case for getting a book by index
+    @Test
+    public void testGetBook() {
+        // Arrange: Set up variables and mock behavior
+        ArrayList<Book> books = new ArrayList<>();
+        books.add(new Book("Book Name", "1234567890", "Category", "Author", "Publisher", "01-01-2022", "15", "10", "20"));
+        when(logic.getAllBooks()).thenReturn(books);
+
+        // Act: Call the getBook method
+        Book result = librarianModel.getBook(0);
+
+        // Assert: Verify that getAllBooks method is called once, and the result is the expected book
+        verify(logic, times(1)).getAllBooks();
+        assertEquals(books.get(0), result);
+    }
+
+    // Test case for getting the list of all books
+    @Test
+    public void testGetBooks() {
+        // Arrange: Set up variables and mock behavior
+        ArrayList<Book> books = new ArrayList<>();
+        books.add(new Book("Book Name", "1234567890", "Category", "Author", "Publisher", "01-01-2022", "15", "10", "20"));
+        when(logic.getAllBooks()).thenReturn(books);
+
+        // Act: Call the getBooks method
+        ArrayList<Book> result = librarianModel.getBooks();
+
+        // Assert: Verify that getAllBooks method is called once, and the result is the expected list of books
+        verify(logic, times(1)).getAllBooks();
+        assertEquals(books, result);
+    }
+
+    // Test case for getting a specific bill by bill number
+    @Test
+    public void testGetBill() {
+        // Arrange: Set up variables and mock behavior
+        int billNo = 1;
+        Bill bill = new Bill(new String[]{"1", "10"});
+        when(logic.getBill(billNo)).thenReturn(bill);
+
+        // Act: Call the getBill method
+        Bill result = librarianModel.getBill(billNo);
+
+        // Assert: Verify that getBill method is called once, and the result is the expected bill
+        verify(logic, times(1)).getBill(billNo);
+        assertEquals(bill, result);
+    }
+
+    // Test case for getting bill data in printable format for export
+    @Test
+    public void testGetBillDataForExport() {
+        // Arrange: Set up variables and mock behavior
+        int billNo = 1;
+        String billData = "Bill Data";
+        when(logic.getBillDataInPrintableFormat(billNo)).thenReturn(billData);
+
+        // Act: Call the getBillDataForExport method
+        String result = librarianModel.getBillDataForExport(billNo);
+
+        // Assert: Verify that getBillDataInPrintableFormat method is called once, and the result is the expected bill data
+        verify(logic, times(1)).getBillDataInPrintableFormat(billNo);
+        assertEquals(billData, result);
+    }
+
+    // Test case for exporting bill data
+    @Test
+    public void testExportBillData() {
+        // Arrange: Set up variables
+        int billNo = 1;
+        String data = "Bill Data";
+
+        // Act: Call the exportBillData method
+        librarianModel.exportBillData(billNo, data);
+
+        // Assert: Verify that exportBill method is called once
+        verify(logic, times(1)).exportBill(billNo, data);
     }
 }
