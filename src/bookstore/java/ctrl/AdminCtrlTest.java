@@ -16,10 +16,12 @@ import java.util.Optional;
 
 public class AdminCtrlTest {
 
+    // Declaration of instance variables
     private AdminModel model;
     private AdminView view;
     private AdminCtrl controller;
 
+    // Setup method to initialize objects before each test
     @Before
     public void setUp() {
         model = mock(AdminModel.class);
@@ -27,6 +29,7 @@ public class AdminCtrlTest {
         controller = new AdminCtrl(model, view);
     }
 
+    // Test for the addBookBtnAction method with valid book data
     @Test
     public void testAddBookBtnAction_ValidBook() {
         // Mocking the result of the AddBookDialog
@@ -50,6 +53,7 @@ public class AdminCtrlTest {
         verify(view, times(1)).updateBooksData();
     }
 
+    // Test for the addBookBtnAction method with invalid book data
     @Test
     public void testAddBookBtnAction_InvalidBook() {
         // Mocking the result of the AddBookDialog with invalid input
@@ -65,11 +69,17 @@ public class AdminCtrlTest {
         controller.addBookBtnAction();
 
         // Verifying the interactions
+
+        //Ensures that the addBook method of the model mock object is never called with any instance of the 
+        //Book class during the test.
         verify(model, never()).addBook(any(Book.class));
+        //Verifies that the updateData method of the model mock object is never called during the test.
         verify(model, never()).updateData();
+        // Checks that the updateBooksData method of the view mock object is never called during the test.
         verify(view, never()).updateBooksData();
     }
 
+    // Test for the checkoutBtnAction method with unsuccessful billing
     @Test
     public void testCheckoutBtnActionUnsuccessfulBilling() {
         // Mocking the view's getBookSelectedIndex method
@@ -85,14 +95,22 @@ public class AdminCtrlTest {
         controller.checkoutBtnAction();
 
         // Verifying that the necessary methods were called
+        
+        //Ensures that the getBookSelectedIndex method of the view mock object is called exactly once during the test.
         verify(view, times(1)).getBookSelectedIndex();
+        //Verifies that the showInput method of the Message mock object is called exactly once with any string arguments during the test.
         verify(Message, times(1)).showInput(anyString(), anyString());
+        //Checks that the checkOutBook method of the model mock object is called exactly once with specific arguments ("123" and 15) during the test.
         verify(model, times(1)).checkOutBook(eq("123"), eq(15));
+        //Ensures that the getBill method of the model mock object is never called with any integer argument during the test.
         verify(model, never()).getBill(anyInt());
+        //Checks that the updateData method of the model mock object is never called during the test.
         verify(model, never()).updateData();
+        //Verifies that the showError method of the Message mock object is called exactly once with any string argument during the test.
         verify(Message, times(1)).showError(anyString());
     }
 
+    // Test for the fullInfoBtnAction method when the book exists
     @Test
     public void testFullInfoBtnActionBookExists() {
         // Mocking the view's getBookSelectedIndex method
@@ -105,7 +123,9 @@ public class AdminCtrlTest {
         controller.fullInfoBtnAction();
 
         // Verifying that the necessary methods were called
+        //Checks that the getBookSelectedIndex method of the view mock object is called exactly once during the test.
         verify(view, times(1)).getBookSelectedIndex();
+        //Ensures that the getBook method of the model mock object is called once with the argument 0 during the test
         verify(model, times(1)).getBook(eq(0));
 
     }
