@@ -1,161 +1,223 @@
+
 package bookstore.java.ctrl;
 
 import bookstore.java.cmp.Bill;
 import bookstore.java.cmp.Book;
-import bookstore.java.cmp.User;
 import bookstore.java.cmp.Message;
-
+import bookstore.java.cmp.User;
+import bookstore.java.dialog.AddBookDialog;
 import bookstore.java.model.ManagerModel;
 import bookstore.java.view.ManagerView;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
-import org.mockito.MockitoAnnotations;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
+public class ManagerCtrl {
 
-public class ManagerCtrlTest {
-    private ManagerCtrl managerCtrl;
+    private final ManagerModel model;
+    private final ManagerView view;
 
-    private ManagerModel model;
-    private ManagerView view;
+    // *************** Constructor/Initializer ************** //
 
-    @BeforeEach
-    public void setUp() {
-        model = mock(ManagerModel.class);
-        view = mock(ManagerView.class);
-        managerCtrl = new ManagerCtrl(model, view);
+    public ManagerCtrl(ManagerModel model, ManagerView view) {
+        this.model = model;
+        this.view = view;
+
+        // set controller to components
+        view.setLogoutBtnAction(e -> logoutBtnAction());
+        view.setAddBookBtnAction(e -> addBookBtnAction());
+        view.setIncrStkBtnAction(e -> incrStkBtnAction());
+        view.setFullInfoBtnAction(e -> fullInfoBtnAction());
+        view.setChkLibPerfBtnAction(e -> chkLibPerfBtnAction());
+        view.setChkStrPerfBtnAction(e -> setChkStrPerfBtnAction());
     }
 
-    @Test
-    public void testLogoutBtnAction() {
-        // Arrange
-        if (view != null && model != null && managerCtrl != null) {
-            managerCtrl.logoutBtnAction();
+    // ************************ END ************************* //
 
-            // Assert
-            verify(model, times(1)).logout();
+    // ************************ Fn ************************** //
+
+    public void logoutBtnAction() {
+        model.logout();
+    }
+
+    public void addBookBtnAction() {
+
+        new AddBookDialog().showAndGetResult().ifPresent(e -> {
+
+            String[] data = new String[9];
+
+            for (String s : e) {
+                if (s != null && s.isEmpty()) {
+                    Message.showError("A field is empty,\nPlease fill all fields");
+                    return;
+                }
+            }
+
+            try {
+                data[0] = Long.parseLong(e.get(0)) + "";
+            } catch (NumberFormatException f) {
+                Message.showError("Please enter numeric value in isbn field");
+                return;
+            }
+
+            try {
+                data[5] = Integer.parseInt(e.get(5)) + "";
+            } catch (NumberFormatException f) {
+                Message.showError("Please enter numeric value in cp field");
+                return;
+            }
+
+            try {
+                data[6] = Integer.parseInt(e.get(6)) + "";
+            } catch (NumberFormatException f) {
+                Message.showError("Please enter numeric value in sp field");
+                return;
+            }
+
+            try {
+                data[8] = Integer.parseInt(e.get(8)) + "";
+            } catch (NumberFormatException f) {
+                Message.showError("Please enter numeric value in stock field");
+                return;
+            }
+
+            try {
+                Date date = new SimpleDateFormat("dd-MM-yyyy").parse(e.get(4));
+                data[4] = e.get(4);
+            } catch (ParseException f) {
+                Message.showError("Invalid date format\nDate format should be DD-MM-YYYY\nEx: 01/01/1983");
+                return;
+            }
+
+            data[1] = e.get(1);
+            data[2] = e.get(2);
+            data[3] = e.get(3);
+            data[7] = e.get(7);
+
+            Book book = new Book(data);
+
+            if (model.addBook(book)) {
+                model.updateData();
+                view.updateBooksData();
+                Message.showInfo("Book added", "Information");
+            } else {
+                Message.showError("Book with the given isbn already exist\nenter another one");
+            }
+
+        });
+
+    }
+
+    public void incrStkBtnAction() {
+
+        int res = view.getBookSelectedIndex();
+
+        Optional<String> resText = Message.showInput("Quantity", "Enter quantity");
+
+        resText.ifPresent(e -> {
+
+            int q = 0;
+            try {
+                q = Integer.parseInt(e);
+            } catch (NumberFormatException f) {
+                Message.showError("Please enter a numeric value");
+                return;
+            }
+
+            if (model.addStock(res, q)) {
+                model.updateData();
+                Message.showInfo("Stock added", "Information");
+            } else {
+                Message.showError("Please enter a valid quantity");
+            }
+        });
+
+    }
+
+    public void fullInfoBtnAction() {
+
+        int res = view.getBookSelectedIndex();
+        Book book = model.getBook(res);
+
+        if (book != null) {
+
+            StringBuilder sb = new StringBuilder();
+
+            sb.append("Book name: ").append(book.getName()).append("\n");
+            sb.append("ISBN: ").append(book.getISBN()).append("\n");
+            sb.append("Category: ").append(book.getCategory()).append("\n");
+            sb.append("Author: ").append(book.getAuthor()).append("\n");
+            sb.append("Publisher: ").append(book.getPublisher()).append("\n");
+            sb.append("Publishing Date: ").append(book.getPDate()).append("\n");
+            sb.append("Selling Price: ").append(book.getSP()).append("\n");
+            sb.append("Cost Price: ").append(book.getCP()).append("\n");
+            sb.append("Stock: ").append(book.getStock()).append("\n");
+
+            Message.showInfo(sb.toString(), "Book Data");
         }
-        // Act
-
     }
 
-    @Test
-    public void testAddBookBtnAction() {
-        // Arrange
-        ArrayList<String> bookData = new ArrayList<>();
-        bookData.add("1234567890"); // ISBN
-        bookData.add("Book Name"); // Name
-        bookData.add("Category"); // Category
-        bookData.add("Author"); // Author
-        bookData.add("01-01-2022"); // Publishing Date
-        bookData.add("10"); // Cost Price
-        bookData.add("15"); // Selling Price
-        bookData.add("Publisher"); // Publisher
-        bookData.add("20"); // Stock
-        if (view != null && model != null && managerCtrl != null) {
-            when(view.getBookSelectedIndex()).thenReturn(0);
-            when(Message.showInput(eq("Quantity"), eq("Enter quantity"))).thenReturn(Optional.of("5"));
-            when(model.addBook(any(Book.class))).thenReturn(true);
+    public void chkLibPerfBtnAction() {
 
-            // Act
-            managerCtrl.addBookBtnAction();
+        int res = view.getLibSelectedIndex();
+        User user = model.getUser(res);
+        ArrayList<Bill> bills = model.getBills(user);
 
-            // Assert
-            verify(model, times(1)).addBook(any(Book.class));
-            verify(model, times(1)).updateData();
-            verify(view, times(1)).updateBooksData();
-            // verify(Message, times(1)).showInfo(eq("Book added"), eq("Information"));
+        int totalBills = bills.size();
+        int totalBookSold = 0;
+        int earnings = 0;
+
+        for (Bill bill : bills) {
+            totalBookSold += bill.getQuantity();
+            earnings += bill.getProfit();
         }
+        ;
+
+        StringBuilder s = new StringBuilder();
+        s.append("Name: ").append(user.getName()).append("\n");
+        s.append("Total Bills: ").append(totalBills).append("\n");
+        s.append("Total Books Sold: ").append(totalBookSold).append("\n");
+        s.append("Total Earnings: ").append(earnings).append("\n");
+
+        Message.showInfo(s.toString(), "Work Performance");
+
     }
 
-    @Test
-    public void testIncrStkBtnAction() {
-        if (view != null && model != null && managerCtrl != null) {
-            // Arrange
-            when(view.getBookSelectedIndex()).thenReturn(0);
-            when(Message.showInput(eq("Quantity"), eq("Enter quantity"))).thenReturn(Optional.of("5"));
-            when(model.addStock(eq(0), eq(5))).thenReturn(true);
+    public void setChkStrPerfBtnAction() {
 
-            // Act
-            managerCtrl.incrStkBtnAction();
+        ArrayList<Bill> bills = model.getBills();
+        ArrayList<Book> books = model.getBooks();
 
-            // Assert
-            verify(model, times(1)).addStock(eq(0), eq(5));
-            verify(model, times(1)).updateData();
-            // verify(Message, times(1)).showInfo(eq("Stock added"), eq("Information"));
+        int totalBills = bills.size();
+        int currTotalBooks = 0;
+        int investment = 0;
+        int booksSold = 0;
+        int storeProfit = 0;
+
+        for (Book b : books) {
+            currTotalBooks += b.getStock();
+            investment += b.getStock() * b.getCP();
         }
-    }
 
-    @Test
-    public void testFullInfoBtnAction() {
-        if (view != null && model != null && managerCtrl != null) {
-            // Arrange
-            when(view.getBookSelectedIndex()).thenReturn(0);
-            when(model.getBook(eq(0))).thenReturn(
-                    new Book("Book Name", "1234567890", "Category", "Author", "Publisher", "01-01-2022", "15", "10", "20"));
-
-            // Act
-            managerCtrl.fullInfoBtnAction();
-
-            // Assert
-            verify(view, times(1)).getBookSelectedIndex();
-            verify(model, times(1)).getBook(eq(0));
-        /* verify(Message, times(1)).showInfo(eq(
-                "Book name: Book Name\nISBN: 1234567890\nCategory: Category\nAuthor: Author\nPublisher: Publisher\nPublishing Date: 01-01-2022\nSelling Price: 15\nCost Price: 10\nStock: 20"),
-                eq("Book Data")); */
+        for (Bill bi : bills) {
+            booksSold += bi.getQuantity();
+            storeProfit += bi.getProfit();
+            investment += bi.getPrice() - bi.getProfit();
         }
+
+        StringBuilder s = new StringBuilder();
+        s.append("Books in stock: ").append(currTotalBooks).append("\n");
+        s.append("Books Sold: ").append(booksSold).append("\n");
+        s.append("Store Investment: ").append(investment).append("\n");
+        s.append("Total Bills: ").append(totalBills).append("\n");
+        s.append("Profit on Sale: ").append(storeProfit).append("\n");
+
+        Message.showInfo(s.toString(), "Store Performance");
     }
 
-    @Test
-    public void testChkLibPerfBtnAction() {
-        if (view != null && model != null && managerCtrl != null) {
-            // Arrange
-            when(view.getLibSelectedIndex()).thenReturn(0);
-            when(model.getUser(eq(0))).thenReturn(new User(new String[]{"User Name"}));
-            ArrayList<Bill> bills = new ArrayList<>();
-            bills.add(new Bill(new String[]{"1", "10"}));
-            bills.add(new Bill(new String[]{"2", "20"}));
-            when(model.getBills(any(User.class))).thenReturn(bills);
+    // ************************ END ************************* //
 
-            // Act
-            managerCtrl.chkLibPerfBtnAction();
-
-            // Assert
-            verify(view, times(1)).getLibSelectedIndex();
-            verify(model, times(1)).getUser(eq(0));
-            verify(model, times(1)).getBills(any(User.class));
-        /* verify(Message, times(1)).showInfo(
-                eq("Name: User Name\nTotal Bills: 2\nTotal Books Sold: 3\nTotal Earnings: 30"), eq("Work Performance"));*/
-        }
-    }
-
-    @Test
-    public void testSetChkStrPerfBtnAction() {
-        if (view != null && model != null && managerCtrl != null) {
-            // Arrange
-            ArrayList<Bill> bills = new ArrayList<>();
-            bills.add(new Bill(new String[]{"1", "10", "5", "2"}));
-            bills.add(new Bill(new String[]{"2", "20", "10", "5"}));
-            when(model.getBills()).thenReturn(bills);
-            ArrayList<Book> books = new ArrayList<>();
-            books.add(
-                    new Book("Book Name", "1234567890", "Category", "Author", "Publisher", "01-01-2022", "15", "10", "20"));
-            when(model.getBooks()).thenReturn(books);
-
-            // Act
-            managerCtrl.setChkStrPerfBtnAction();
-
-            // Assert
-            verify(model, times(1)).getBills();
-            verify(model, times(1)).getBooks();
-            /* verify(Message, times(1)).showInfo(
-                eq("Books in stock: 20\nBooks Sold: 15\nStore Investment: 200\nTotal Bills: 2\nProfit on Sale: 10"),
-                eq("Store Performance"));*/
-        }
-    }
 }
